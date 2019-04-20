@@ -6,11 +6,15 @@
 #include <iostream>
 #include <string>
 #include "User.h"
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 #include <cpr/cpr.h>
 using namespace std;
+using namespace rapidjson;
 
 int getStockPrice();
-void test();
+int test();
 
 int request;
 const int MOSTREQUESTS = 100;
@@ -33,7 +37,7 @@ int main()
 	cin >> age;
 	user1.setAge(age);
 
-	while (choice != 9)
+	while (choice != 9 && user1.getRequests() < MOSTREQUESTS)
 	{
 		cout << "What would you like to do?" << endl;
 		cout << "1. Get Stock Price" << endl;
@@ -51,15 +55,10 @@ int main()
 		}
 		else if (choice == 2)
 		{
-			request = getStockPrice();
+			request = test();
 			user1.setRequests(request);
 		}
 		else if (choice == 3)
-		{
-			request = getStockPrice();
-			user1.setRequests(request);
-		}
-		else if (choice == 4)
 		{
 			request = getStockPrice();
 			user1.setRequests(request);
@@ -96,7 +95,45 @@ int getStockPrice()
 	return 1;
 }
 
-void test()
+int test()
 {
-	
+	string start = "https://cloud.iexapis.com/beta/stock/";
+	string uInput;
+	string fin = "/quote/?token=pk_05b60effc229410da18fd2dd0aa3bbae";
+	string link;
+
+	cout << "Get Stock" << endl;
+	cin >> uInput;
+
+	link = start + uInput + fin;
+
+	auto r = cpr::Get(cpr::Url{ link });
+
+	std::string s = r.text;
+
+	int n = s.length();
+
+	char json[1000];
+
+	strcpy_s(json, s.c_str());
+
+	Document d;
+	d.Parse(json);
+
+	Value& c = d["companyName"];
+	cout << endl;
+
+	cout << c.GetString() << endl;
+
+	cout << endl;
+
+	// 3. Stringify the DOM
+	StringBuffer buffer;
+	Writer<StringBuffer> writer(buffer);
+	d.Accept(writer);
+
+	// Output the full json
+	std::cout << buffer.GetString() << std::endl;
+
+	return 12;
 }

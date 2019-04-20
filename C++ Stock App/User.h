@@ -1,3 +1,6 @@
+//User class, includes name, age, requests, adds a request amount every time something is returned
+//Created by Carl Phillips
+
 #include <string>
 #include "pch.h"
 #pragma once
