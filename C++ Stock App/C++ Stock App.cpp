@@ -29,6 +29,8 @@ int getCrypto();
 
 int getStockStats();
 
+int getCompanyDetails();
+
 int main()
 {
 	/*code for reference
@@ -65,7 +67,8 @@ int main()
 			cout << "1. Get Stock Price" << endl;
 			cout << "2. Get Details for a Stock" << endl;
 			cout << "3. Get Stats for a Stock"<<endl;
-			cout << "4. Get Crypto prices" << endl;
+			cout << "4. Get Details for a Stock Company" << endl;
+			cout << "5. Get Crypto prices" << endl;
 			cout << "9. Exit Program" << endl;
 
 			cin >> choice;												//gets the users choice
@@ -85,7 +88,12 @@ int main()
 				request = getStockStats();
 				user1.setRequests(request);
 			}
-			else if (choice==4)
+			else if(choice==4)
+			{
+				request = getCompanyDetails();
+				user1.setRequests(request);
+			}
+			else if (choice==5)
 			{
 				request = getCrypto();
 				user1.setRequests(request);
@@ -138,6 +146,30 @@ int getCrypto()
 	return 1;
 }
 
+int getCompanyDetails()
+{
+	string link;
+	string token = "pk_05b60effc229410da18fd2dd0aa3bbae";
+	string stock;
+	cout << "Please input stock ticker symbol for the company you are interested in: ";
+	cin >> stock;
+	link = "https://cloud.iexapis.com/beta/stock/" + stock + "/company?token=" + token;
+	auto r = cpr::Get(cpr::Url{ link });				//calls to a website and returns a json string
+	json x = json::parse(r.text);
+	cout << "\nCompany Name: " << x["companyName"];
+	cout << "\nEmployees: " << x["employees"];
+	cout << "\nCEO: " << x["CEO"];
+	cout << "\nExchange: " << x["exchange"];
+	cout << "\nIndustry: " << x["industry"];
+	cout << "\nWebsite: " << x["website"];
+	cout << "\nDescription: " << x["description"];
+	cout << "\nIssue Type: " << x["issueType"];
+	cout << "\nSector: " << x["sector"];
+	cout << "\n";
+	return 1;
+}
+
+
 int getStockStats()
 {
 	string link;	
@@ -165,6 +197,7 @@ int getStockStats()
 	cout << "\n";
 	return 5;
 }
+
 
 
 int getStockPrice()										//just gets the stock price -- uses the rapidjson method
